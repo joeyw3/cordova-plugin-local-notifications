@@ -534,8 +534,18 @@ UNNotificationPresentationOptions const OptionAlert = UNNotificationPresentation
         event = @"clear";
     }
 
-    if (!deviceready && [event isEqualToString:@"click"]) {
+    if ([event isEqualToString:@"click"]) {
         _launchDetails = @[toast.options.id, event];
+
+        if(deviceready) {
+            NSString* resumeDetails = [NSString stringWithFormat:
+                @"cordova.plugins.notification.local.resumeDetails = {id:%@, action:'%@'}",
+                _launchDetails[0], _launchDetails[1]];
+
+            [self.commandDelegate evalJs:resumeDetails];
+
+            _launchDetails = NULL;
+        }
     }
 
     if (![event isEqualToString:@"clear"]) {
